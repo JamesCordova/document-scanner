@@ -21,12 +21,12 @@ if not webCamFeed:
         sys.exit(1)
 else:
     # Si se usa la webcam, se solicita la URL de la cámara IP (si es necesario)
-    url = input("Ingrese la URL de la cámara IP (por ejemplo, http://192.168.x.x:8080/video): ").strip()
+    url = input("Ingrese la URL de la cámara IP (por ejemplo, 0 para cámara local): ").strip()
     if not url:
         print("Error: No se proporcionó una URL de cámara IP.")
         url = default_url
+    print("Usando cámara IP:", url)
     cap = cv2.VideoCapture(url)  # Se usa la cámara IP en lugar de la webcam local
-
 
 # Verificar si la cámara está disponible
 if webCamFeed == True and not cap.isOpened():
