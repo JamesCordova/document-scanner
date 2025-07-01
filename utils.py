@@ -2,7 +2,7 @@ import cv2
 import numpy as np
  
 ## TO STACK ALL THE IMAGES IN ONE WINDOW
-def stackImages(imgArray,scale,lables=[]):
+def stackImages(imgArray,scale,labels=[]):
     rows = len(imgArray)
     cols = len(imgArray[0])
     rowsAvailable = isinstance(imgArray[0], list)
@@ -28,14 +28,19 @@ def stackImages(imgArray,scale,lables=[]):
         hor= np.hstack(imgArray)
         hor_con= np.concatenate(imgArray)
         ver = hor
-    if len(lables) != 0:
+    if len(labels) != 0:
         eachImgWidth= int(ver.shape[1] / cols)
         eachImgHeight = int(ver.shape[0] / rows)
         print(eachImgHeight)
         for d in range(0, rows):
             for c in range (0,cols):
-                cv2.rectangle(ver,(c*eachImgWidth,eachImgHeight*d),(c*eachImgWidth+len(lables[d])*13+27,30+eachImgHeight*d),(255,255,255),cv2.FILLED)
-                cv2.putText(ver,lables[d],(eachImgWidth*c+10,eachImgHeight*d+20),cv2.FONT_HERSHEY_COMPLEX,0.7,(255,0,255),2)
+                # Convertir cada elemento de labels a cadena
+                text = str(labels[d][c]) if isinstance(labels[d], list) else str(labels[d])
+                cv2.rectangle(ver, (c*eachImgWidth, eachImgHeight*d),
+                              (c*eachImgWidth+len(text)*13+27, 30+eachImgHeight*d),
+                              (255, 255, 255), cv2.FILLED)
+                cv2.putText(ver, text, (eachImgWidth*c+10, eachImgHeight*d+20),
+                            cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 255), 2)
     return ver
  
 def reorder(myPoints):
