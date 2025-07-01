@@ -4,21 +4,42 @@ import utils
 import sys
 
 print("Iniciando Document Scanner...")
-print("Presiona 's' para guardar imagen")
-print("Presiona 'q' para salir")
 
 ########################################################################
-webCamFeed = True
-pathImage = "1.jpg"
-cap = cv2.VideoCapture(0)
+
+
+# Preguntar si se quiere usar la webcam o una imagen
+webCamFeed = input("¿Usar webcam? (s/n): ").strip().lower() == 's'
+default_image = "1.jpg"
+default_url = "http://10.7.121.249:8080/video"
+
+# Si no se usa la webcam, se solicita la ruta de un archivo de Imagen
+if not webCamFeed:
+    pathImage = input("Ingrese la ruta del archivo de Imagen: ").strip()
+    if not pathImage:
+        print("Error: No se proporcionó una ruta de archivo de Imagen.")
+        sys.exit(1)
+else:
+    # Si se usa la webcam, se solicita la URL de la cámara IP (si es necesario)
+    url = input("Ingrese la URL de la cámara IP (por ejemplo, http://192.168.x.x:8080/video): ").strip()
+    if not url:
+        print("Error: No se proporcionó una URL de cámara IP.")
+        url = default_url
+    cap = cv2.VideoCapture(url)  # Se usa la cámara IP en lugar de la webcam local
+
 
 # Verificar si la cámara está disponible
-if not cap.isOpened():
+if webCamFeed == True and not cap.isOpened():
+    print("Error: No se pudo acceder a la cámara")
+    print("Cambiando a modo cámara local...")
+    cap = cv2.VideoCapture(0) 
+if webCamFeed == True and not cap.isOpened():
     print("Error: No se pudo acceder a la cámara")
     print("Cambiando a modo imagen estática...")
     webCamFeed = False
 
-cap.set(10,160)
+if webCamFeed == True: 
+    cap.set(10,160)
 heightImg = 640
 widthImg  = 480
 ########################################################################
@@ -97,3 +118,11 @@ while True:
         cv2.imshow('Result', stackedImage)
         cv2.waitKey(300)
         count += 1
+    # Salir del bucle si se presiona la tecla 'q'
+    elif cv2.waitKey(1) & 0xFF == ord('q'):
+        print("Saliendo del escáner de documentos...")
+        break
+# Liberar la cámara y cerrar todas las ventanas
+cap.release()
+cv2.destroyAllWindows()
+
